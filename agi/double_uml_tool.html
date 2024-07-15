@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UML Master</title>
+    <link rel="icon" type="image/png" href="./../images/favicon.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #e0f7fa;
+        }
+        .container {
+            display: flex;
+            margin-bottom: 30px;
+            width: 100%;
+            height: calc(100% - 40px);
+            max-width: 1200px;
+            padding: 20px;
+        }
+        .chat-container {
+            flex: 1;
+            margin: 10px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #00796b;
+        }
+        .input-area {
+		    /* flex: 1; */
+            height: 150px;
+            margin-top: 20px;
+            width: calc(100% - 50px);
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        .output-area {
+		    flex: 1;
+            margin-bottom: 20px;
+            width: calc(100% - 50px);
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border: 1px solid #000;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            background-color: transparent;
+            min-width: 100px;
+        }
+        button:hover {
+            background-color: #e0e0e0;
+        }
+        .output-area {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #fafafa;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .output-text {
+            margin-bottom: 10px;
+        }
+        .output-text h1, .output-text h2, .output-text h3, .output-text h4, .output-text h5, .output-text h6 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .output-text p {
+            margin-bottom: 10px;
+        }
+        .output-text pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .output-text code {
+            font-family: monospace;
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        .output-text ul, .output-text ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        .output-text blockquote {
+            border-left: 4px solid #ccc;
+            padding-left: 10px;
+            margin-left: 0;
+            color: #666;
+        }
+        .copy-notification {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 150, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .copy-notification.visible {
+            opacity: 1;
+        }
+        .copy-notification img {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 6px;
+            background-color: #00796b;
+            color: white;
+            position: absolute;
+            bottom: 0;
+        }
+        /* Image preview styles */
+        .image-preview-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .image-preview {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .help-button {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: transparent;
+            color: white;
+            font-size: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+            z-index: 1001;
+        }
+        .help-button:hover {
+            background-color: #75ae0b;
+        }
+        .help-modal {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 70px;
+            width: 300px;
+            height: 400px;
+            background-color: rgb(249, 243, 243);
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 1002;
+        }
+        .help-modal h2 {
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+        }
+        .help-modal p {
+            font-size: 14px;
+            font-weight: bold;
+            font-family: "STFangsong", "仿宋";
+            color: black;
+        }
+        .help-modal li {
+            font-size: 12px;
+            color: gray;
+        }
+    </style>
+    <!-- 添加marked库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <!-- Top Translator -->
+    <div class="chat-container">
+        <div class="title">标准 PlantUML 语句自动生成器</div>
+        <div class="input-area">
+            <textarea id="questionInput1" placeholder="Type your question here..."></textarea>
+        </div>
+        <div class="buttons">
+            <button class="btn-cancel" onclick="clearMessage(1)">Cancel</button>
+            <button class="btn-confirm" onclick="sendMessage(1)">Confirm</button>
+        </div>
+        <div class="output-area" id="outputArea1">
+            <!-- Responses will appear here -->
+        </div>
+        <div class="buttons">
+            <button class="btn-copy" onclick="copyOutput(1)">Copy</button>
+            <button class="btn-clear" onclick="clearOutput(1)">Clear</button>
+        </div>
+        <div class="copy-notification" id="copyNotification1">
+            <img src="https://img.icons8.com/ios-filled/50/000000/megaphone.png" alt="Notification Icon"/>
+            拷贝成功！
+        </div>
+    </div>
+
+    <!-- Top Explicator -->
+    <div class="chat-container">
+        <div class="title">UML 图片生成大师</div>
+        <div class="input-area">
+            <textarea id="questionInput2" placeholder="Type your question here..."></textarea>
+        </div>
+        <div class="buttons">
+            <button class="btn-cancel" onclick="clearMessage(2)">Cancel</button>
+            <button class="btn-confirm" onclick="sendMessage(2)">Confirm</button>
+        </div>
+        <div class="output-area" id="outputArea2">
+            <!-- Responses will appear here -->
+        </div>
+        <div class="buttons">
+            <button class="btn-copy" onclick="copyOutput(2)">Copy</button>
+            <button class="btn-clear" onclick="clearOutput(2)">Clear</button>
+        </div>
+        <div class="copy-notification" id="copyNotification2">
+            <img src="https://img.icons8.com/ios-filled/50/000000/megaphone.png" alt="Notification Icon"/>
+            拷贝成功！
+        </div>
+    </div>
+</div>
+
+<div class="image-preview-container" id="imagePreviewContainer">
+    <img id="imagePreview" class="image-preview" alt="Image Preview">
+</div>
+
+<!-- Help button and modal -->
+<div class="help-button" onclick="toggleHelpModal()">📜</div>
+<div class="help-modal" id="helpModal">
+    <h2>📢使用说明</h2>
+    <p>👉标准 PlantUML 语句自动生成器👈</p>
+    <p>其可以理解用户输入的自然语言，亦或是代码片段，据此生成标准且美观的 PlantUML 语句，也可以对 PlantUML 语法进行解释及 PlantUML 语句优化。</p>
+    <p>主要能力如下：</p>
+    <ul>
+        <li>根据用户输入的自然语言生成 PlantUML 语句</li>
+        <li>根据用户提供的代码片段生成 PlantUML 语句</li>
+        <li>对用户提供的 PlantUML 片段代码进行优化</li>
+        <li>解释提供的 PlantUML 语句</li>
+        <li>介绍 PlantUML 基础概念</li>
+    </ul>
+    <p>👉UML 图片生成大师👈</p>
+    <p>根据据用户提供的完整 PlantUML 语句生成 UML 图。</p>
+    <p>注意：不要提供除正确代码以外的任何东西。</p>
+</div>
+
+<footer>
+    &copy; <span id="year"></span> Lemo`s Studio. All rights reserved.
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.10/marked.min.js"></script>
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    async function sendMessage(id) {
+        const question = document.getElementById(`questionInput${id}`).value;
+        if (!question) {
+            alert('Please enter a question!');
+            return;
+        }
+
+        const outputArea = document.getElementById(`outputArea${id}`);
+        outputArea.innerHTML = '<div class="processing">处理中...</div>';
+
+        const payload = {
+            "conversation_id": id === 1 ? "123" : "456",
+            "bot_id": id === 1 ? "7385444314081493032" : "7385449720560336905",
+            "user": "29032201862555",
+            "query": question,
+            "stream": false
+        };
+
+        try {
+            const response = await fetch('https://api.coze.cn/open_api/v2/chat', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer pat_35tJyxNQiwoKZa9iqYce7ZmCOUUymBjhYqqC0xoFQOhVc18HRWSrX39MAHiffYNc',
+                    'Content-Type': 'application/json',
+                    'Accept': '*/*',
+                    'Host': 'api.coze.cn',
+                    'Connection': 'keep-alive'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+
+            const data = await response.json();
+            displayOutput(data, id);
+        } catch (error) {
+            displayOutput({ "error": error.message }, id);
+        }
+    }
+
+    function displayOutput(data, id) {
+        const outputArea = document.getElementById(`outputArea${id}`);
+        outputArea.innerHTML = '';
+
+        const messages = data.messages.filter(message => message.type === 'answer');
+        messages.forEach(message => {
+            const text = document.createElement('div');
+            text.className = 'output-text';
+            // 使用marked库来解析Markdown
+            text.innerHTML = marked.parse(message.content);
+            outputArea.appendChild(text);
+        });
+
+        // 添加双击事件监听
+        const imgs = outputArea.querySelectorAll('img');
+        imgs.forEach(img => {
+            img.addEventListener('dblclick', () => showImagePreview(img.src));
+        });
+    }
+
+    function clearMessage(id) {
+        document.getElementById(`questionInput${id}`).value = '';
+    }
+
+    function clearOutput(id) {
+        document.getElementById(`outputArea${id}`).innerHTML = '';
+    }
+
+    function copyOutput(id) {
+        const outputArea = document.getElementById(`outputArea${id}`);
+        const range = document.createRange();
+        range.selectNodeContents(outputArea);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        try {
+            document.execCommand('copy');
+            showCopyNotification(id);
+        } catch (err) {
+            console.error('Failed to copy output', err);
+        }
+        window.getSelection().removeAllRanges();
+    }
+
+    function showCopyNotification(id) {
+        const notification = document.getElementById(`copyNotification${id}`);
+        notification.classList.add('visible');
+        setTimeout(() => {
+            notification.classList.remove('visible');
+        }, 2000);
+    }
+
+    function showImagePreview(src) {
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const previewImage = document.getElementById('imagePreview');
+
+        previewImage.src = src;
+
+        previewContainer.style.display = 'flex';
+        previewContainer.addEventListener('click', hideImagePreview);
+    }
+
+    function hideImagePreview() {
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        previewContainer.style.display = 'none';
+    }
+
+    function toggleHelpModal() {
+        const helpModal = document.getElementById('helpModal');
+        helpModal.style.display = helpModal.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.addEventListener('click', function(event) {
+        const helpModal = document.getElementById('helpModal');
+        if (event.target !== helpModal && !helpModal.contains(event.target) && event.target.className !== 'help-button') {
+            helpModal.style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>
