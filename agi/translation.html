@@ -227,10 +227,6 @@
     </div>
 </div>
 
-<div class="image-preview-container" id="imagePreviewContainer">
-    <img id="imagePreview" class="image-preview" alt="Image Preview">
-</div>
-
 <!-- Help button and modal -->
 <div class="help-button" onclick="toggleHelpModal()">📜</div>
 <div class="help-modal" id="helpModal">
@@ -308,7 +304,6 @@
             text.innerHTML = marked.parse(message.content);
             outputArea.appendChild(text);
         });
-
     }
 
     function clearMessage() {
@@ -341,6 +336,18 @@
             notification.classList.remove('visible');
         }, 2000);
     }
+
+    function toggleHelpModal() {
+        const helpModal = document.getElementById('helpModal');
+        helpModal.style.display = helpModal.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.addEventListener('click', function(event) {
+        const helpModal = document.getElementById('helpModal');
+        if (event.target !== helpModal && !helpModal.contains(event.target) && event.target.className !== 'help-button') {
+            helpModal.style.display = 'none';
+        }
+    });
 </script>
 
 </body>
