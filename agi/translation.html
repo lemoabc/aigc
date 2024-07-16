@@ -18,16 +18,15 @@
             background-color: #e0f7fa;
         }
         .chat-container {
-            margin-bottom: 20px;
-            width: 400px;
-            height: 500px;
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            height: 80vh;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(95, 65, 65, 0.1);
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-			position: relative; /* Add relative positioning */
+            position: relative;
         }
         .title {
             text-align: center;
@@ -36,32 +35,33 @@
             margin-bottom: 20px;
             color: #00796b;
         }
-        .input-area {
-		    flex: 1;
-            margin-top: 20px;
-            width: calc(100% - 50px);
-            margin-left: 20px;
-            margin-right: 20px;
+        .content-area {
+            display: flex;
+            flex: 1;
+            gap: 20px;
         }
-        .output-area {
-		    flex: 1;
-            margin-bottom: 20px;
-            width: calc(100% - 50px);
-            margin-left: 20px;
-            margin-right: 20px;
+        .input-area, .output-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
-        textarea {
-            width: 100%;
-            height: 100px;
+        textarea, .output-content {
+            flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             resize: none;
         }
+        .output-content {
+            background-color: #fafafa;
+            overflow-y: auto;  /* Add vertical scrollbar when content overflows */
+            white-space: pre-wrap;  /* Ensures that whitespace is preserved */
+            font-family: monospace; /* Use a monospace font for code display */
+        }
         .buttons {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 12px; /* Ensure space between buttons and output area */
+            margin-top: 20px;
         }
         button {
             padding: 10px 20px;
@@ -74,19 +74,6 @@
         }
         button:hover {
             background-color: #e0e0e0;
-        }
-        .output-area {
-            flex: 1;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 10px;
-            background-color: #fafafa;
-            overflow-y: auto; /* Add vertical scrollbar when content overflows */
-            white-space: pre-wrap; /* Ensures that whitespace is preserved */
-            font-family: monospace; /* Use a monospace font for code display */
-        }
-        .output-text {
-            margin-bottom: 10px;
         }
         .output-text h1, .output-text h2, .output-text h3, .output-text h4, .output-text h5, .output-text h6 {
             margin-top: 20px;
@@ -144,7 +131,7 @@
             padding: 6px;
             background-color: #00796b;
             color: white;
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0; /* Ensure footer is aligned to the left */
         }
@@ -207,19 +194,23 @@
 
 <div class="chat-container">
     <div class="title">金牌翻译官 Top Translator</div>
-    <div class="input-area">
-        <textarea id="questionInput" placeholder="Type your question here..."></textarea>
-    </div>
-    <div class="buttons">
-        <button class="btn-cancel" onclick="clearMessage()">Cancel</button>
-        <button class="btn-confirm" onclick="sendMessage()">Confirm</button>
-    </div>
-    <div class="output-area" id="outputArea">
-        <!-- Responses will appear here -->
-    </div>
-    <div class="buttons">
-        <button class="btn-copy" onclick="copyOutput()">Copy</button>
-        <button class="btn-clear" onclick="clearOutput()">Clear</button>
+    <div class="content-area">
+        <div class="input-area">
+            <textarea id="questionInput" placeholder="Type your question here..."></textarea>
+            <div class="buttons">
+                <button class="btn-cancel" onclick="clearMessage()">Cancel</button>
+                <button class="btn-confirm" onclick="sendMessage()">Confirm</button>
+            </div>
+        </div>
+        <div class="output-area">
+            <div class="output-content" id="outputArea">
+                <!-- Responses will appear here -->
+            </div>
+            <div class="buttons">
+                <button class="btn-copy" onclick="copyOutput()">Copy</button>
+                <button class="btn-clear" onclick="clearOutput()">Clear</button>
+            </div>
+        </div>
     </div>
     <div class="copy-notification" id="copyNotification">
         <img src="https://img.icons8.com/ios-filled/50/000000/megaphone.png" alt="Notification Icon"/>
@@ -235,10 +226,10 @@
     <p>用户清晰描述想用什么样的语言来翻译词语或句子，点击确认，稍等片刻，就能得到信雅达的翻译结果。</p>
     <ul>
         <li>在文本框中输入你的问题。</li>
-        <li>点击“Confirm”按钮发送问题。</li>
-        <li>输出结果将显示在下面的输出区域。</li>
-        <li>点击“Copy”按钮可以复制输出内容。</li>
-        <li>点击“Clear”按钮可以清空输出区域。</li>
+        <li>点击"Confirm"按钮发送问题。</li>
+        <li>输出结果将显示在右侧的输出区域。</li>
+        <li>点击"Copy"按钮可以复制输出内容。</li>
+        <li>点击"Clear"按钮可以清空输出区域。</li>
     </ul>
 </div>
 
